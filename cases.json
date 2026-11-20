@@ -1,0 +1,82 @@
+{
+  "PERF-01 Login por contraseña": {
+    "suite": "a-auth",
+    "limit": 1500,
+    "role": "Jugador MAD"
+  },
+  "PERF-02 Lectura del propio perfil": {
+    "suite": "a-auth",
+    "limit": 1200,
+    "role": "Jugador MAD"
+  },
+  "PERF-03 Partidas visibles para un anónimo (RLS)": {
+    "suite": "b-eventos",
+    "limit": 800,
+    "role": "Anónimo"
+  },
+  "PERF-04 Partidas del jugador MAD": {
+    "suite": "b-eventos",
+    "limit": 1200,
+    "role": "Jugador MAD"
+  },
+  "PERF-05 Partidas del super admin": {
+    "suite": "b-eventos",
+    "limit": 1500,
+    "role": "Super Admin"
+  },
+  "PERF-06 Inscripciones del jugador MAD": {
+    "suite": "c-inscripciones",
+    "limit": 1200,
+    "role": "Jugador MAD"
+  },
+  "PERF-07 Inscripciones con su partida embebida": {
+    "suite": "c-inscripciones",
+    "limit": 1500,
+    "role": "Super Admin"
+  },
+  "PERF-08 Asistencia consultada por el super admin": {
+    "suite": "d-asistencia",
+    "limit": 1500,
+    "role": "Super Admin"
+  },
+  "PERF-09 Votaciones de la Junta (admin FOE)": {
+    "suite": "e-gobernanza",
+    "limit": 1200,
+    "role": "Admin FOE"
+  },
+  "PERF-10 Faltas FOE (jugador FOE)": {
+    "suite": "e-gobernanza",
+    "limit": 1200,
+    "role": "Jugador FOE"
+  },
+  "PERF-11 Excedencias consultadas por un jugador FOE": {
+    "suite": "f-excedencias",
+    "limit": 1200,
+    "role": "Jugador FOE"
+  },
+  "PERF-12 Perfiles vistos por el super admin": {
+    "suite": "g-jugadores",
+    "limit": 1500,
+    "role": "Super Admin"
+  },
+  "PERF-13 Perfiles de la unidad del jugador MAD": {
+    "suite": "g-jugadores",
+    "limit": 1200,
+    "role": "Jugador MAD"
+  },
+  "PERF-14 Fechas sin partida del jugador MAD": {
+    "suite": "h-calendario",
+    "limit": 1200,
+    "role": "Jugador MAD"
+  },
+  "PERF-15 Documentos del equipo (jugador MAD)": {
+    "suite": "i-normas",
+    "limit": 1200,
+    "role": "Jugador MAD"
+  },
+  "PERF-16 Ping keep_alive": {
+    "suite": "i-normas",
+    "limit": 800,
+    "role": "Anónimo"
+  }
+}

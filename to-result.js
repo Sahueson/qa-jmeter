@@ -48,7 +48,8 @@ const tests = Object.entries(CASES)
     const problems = [];
     if (errs.length) problems.push(`${errs.length}/${rs.length} peticiones con error (${errs[0].code} ${(errs[0].msg || "").split(NL)[0]})`.trim());
     if (p > c.limit) problems.push(`p95 ${p} ms supera el umbral de ${c.limit} ms`);
-    return { name, status: problems.length ? "failed" : "passed", duration_ms: p, role: c.role, error: problems.length ? problems.join("; ") : null, evidence_url: null };
+    return { name, status: problems.length ? "failed" : "passed", duration_ms: p, role: c.role, error: problems.length ? problems.join("; ") : null, evidence_url: null,
+      evidence_data: { medicion: { peticiones: rs.length, errores: errs.length, min_ms: Math.min(...rs.map((x) => x.ms)), media_ms: avg, p95_ms: p, max_ms: Math.max(...rs.map((x) => x.ms)), umbral_p95_ms: c.limit, codigos: [...new Set(rs.map((x) => x.code))] } } };
   });
 const count = (s) => tests.filter((t) => t.status === s).length;
 const stamps = rows.map((r) => +r[col("timeStamp")]).filter((x) => x);

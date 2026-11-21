@@ -78,5 +78,20 @@
     "suite": "i-normas",
     "limit": 800,
     "role": "Anónimo"
+  },
+  "PERF-17 Lectura del perfil en menos de 20 ms (umbral irreal)": {
+    "suite": "j-demo-fallos",
+    "limit": 20,
+    "role": "Jugador MAD"
+  },
+  "PERF-18 Partidas del super admin en menos de 30 ms (umbral irreal)": {
+    "suite": "j-demo-fallos",
+    "limit": 30,
+    "role": "Super Admin"
+  },
+  "PERF-19 Ping keep_alive en menos de 10 ms (umbral irreal)": {
+    "suite": "j-demo-fallos",
+    "limit": 10,
+    "role": "Anónimo"
   }
 }

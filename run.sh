@@ -15,11 +15,14 @@ args=(-n -t "$here/plan.jmx" -l "$here/resultados.jtl" -e -o "$here/report"
   -Jthreads="$(printf %s "${THREADS:-5}" | tr -cd '0-9')"
   -Jloops="$(printf %s "${LOOPS:-10}" | tr -cd '0-9')"
   -Jrampup="$(printf %s "${RAMPUP:-5}" | tr -cd '0-9')"
+  -Jsummariser.interval=3
   -Jsuites="$SUITE" -Jqa_password="${QA_PASSWORD:-}")
+# Pantalla en vivo de la web: convierte el resumen de JMeter en eventos (solo si existe shared/live-tail.js).
+TAIL=(); [ -f shared/live-tail.js ] && TAIL=(node "$PWD/shared/live-tail.js" jmeter --)
 if [ "${OS:-}" = "Windows_NT" ] && [ -n "${JMETER_HOME:-}" ]; then
   # jmeter.bat falla con rutas con espacios: se lanza el JAR directamente
-  (cd "$JMETER_HOME/bin" && java -jar ApacheJMeter.jar "${args[@]}") || true
+  (cd "$JMETER_HOME/bin" && "${TAIL[@]}" java -jar ApacheJMeter.jar "${args[@]}") || true
 else
-  "${JMETER_HOME:+$JMETER_HOME/bin/}jmeter" "${args[@]}" || true
+  "${TAIL[@]}" "${JMETER_HOME:+$JMETER_HOME/bin/}jmeter" "${args[@]}" || true
 fi
 node to-result.js resultados.jtl result.json

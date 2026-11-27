@@ -33,10 +33,23 @@ const byLabel = {};
 for (const r of rows) {
   const label = r[col("label")];
   if (!CASES[label]) continue;
-  (byLabel[label] ||= []).push({ ms: +r[col("elapsed")], ok: r[col("success")] === "true", msg: r[col("failureMessage")], code: r[col("responseCode")] });
+  (byLabel[label] ||= []).push({ ts: +r[col("timeStamp")], ms: +r[col("elapsed")], ok: r[col("success")] === "true", msg: r[col("failureMessage")], code: r[col("responseCode")] });
 }
 const wantedSuites = (process.env.SUITE || "all").split(",");
 const wantedNames = process.env.GREP ? process.env.GREP.split("|").map((n) => n.replace(/^\^/, "").replace(/\$$/, "").replace(/\\(.)/g, "$1")) : null;
+// Serie temporal por tramos de BUCKET segundos desde el primer instante de la prueba: peticiones y tiempo medio (para las gráficas del informe)
+const BUCKET = 2;
+const t0 = Math.min(...rows.map((r) => +r[col("timeStamp")]).filter((x) => x));
+const serieDe = (rs) => {
+  const m = new Map();
+  for (const x of rs) {
+    const s = Math.floor((x.ts - t0) / 1000 / BUCKET) * BUCKET;
+    const b = m.get(s) || { s, n: 0, sum: 0, max: 0 };
+    b.n++; b.sum += x.ms; b.max = Math.max(b.max, x.ms);
+    m.set(s, b);
+  }
+  return [...m.values()].sort((a, b) => a.s - b.s).map((b) => ({ s: b.s, n: b.n, avg_ms: Math.round(b.sum / b.n), max_ms: b.max }));
+};
 const p95 = (a) => { const s = a.map((x) => x.ms).sort((x, y) => x - y); return s[Math.max(0, Math.ceil(s.length * 0.95) - 1)]; };
 const tests = Object.entries(CASES)
   .filter(([name, c]) => (wantedSuites.includes("all") || wantedSuites.includes(c.suite)) && (!wantedNames || wantedNames.includes(name)))
@@ -49,7 +62,7 @@ const tests = Object.entries(CASES)
     if (errs.length) problems.push(`${errs.length}/${rs.length} peticiones con error (${errs[0].code} ${(errs[0].msg || "").split(NL)[0]})`.trim());
     if (p > c.limit) problems.push(`p95 ${p} ms supera el umbral de ${c.limit} ms`);
     return { name, status: problems.length ? "failed" : "passed", duration_ms: p, role: c.role, error: problems.length ? problems.join("; ") : null, evidence_url: null,
-      evidence_data: { medicion: { peticiones: rs.length, errores: errs.length, min_ms: Math.min(...rs.map((x) => x.ms)), media_ms: avg, p95_ms: p, max_ms: Math.max(...rs.map((x) => x.ms)), umbral_p95_ms: c.limit, codigos: [...new Set(rs.map((x) => x.code))] } } };
+      evidence_data: { medicion: { peticiones: rs.length, errores: errs.length, min_ms: Math.min(...rs.map((x) => x.ms)), media_ms: avg, p95_ms: p, max_ms: Math.max(...rs.map((x) => x.ms)), umbral_p95_ms: c.limit, codigos: [...new Set(rs.map((x) => x.code))], tramo_s: BUCKET, serie: serieDe(rs) } } };
   });
 const count = (s) => tests.filter((t) => t.status === s).length;
 const stamps = rows.map((r) => +r[col("timeStamp")]).filter((x) => x);
